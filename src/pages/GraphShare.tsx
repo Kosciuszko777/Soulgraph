@@ -11,12 +11,13 @@ import { useCurrentUser } from '@/hooks/useCurrentUser';
 import { useVault } from '@/hooks/useVault';
 import { useI18n } from '@/hooks/useI18n';
 import { useToast } from '@/hooks/useToast';
+import { useReferral } from '@/hooks/useReferral';
+import { InvitePanel } from '@/components/referral/InvitePanel';
 import {
   buildShareCardSvg,
   renderShareCard,
   type ShareInclude,
 } from '@/lib/shareCard';
-import { referralLink } from '@/core/referral/attribution';
 
 export default function GraphShare() {
   const { t } = useI18n();
@@ -38,12 +39,10 @@ export default function GraphShare() {
   }, [user, state, unlock]);
 
   const tagline = t('app.tagline');
-  // Referral link slot — Prompt 5 supplies the owner's own code. For now the
-  // bare origin (unattributed) so the share surface is complete.
-  const refLink = useMemo(
-    () => (typeof window !== 'undefined' ? referralLink(window.location.origin) : undefined),
-    [],
-  );
+  // The owner's own referral link is stamped onto the share card so every share
+  // carries first-touch attribution (Phase I records it; Phase VII pays it).
+  const { link: referralHref } = useReferral();
+  const refLink = referralHref ?? undefined;
 
   // Live preview SVG (data URL) that mirrors the exported PNG exactly.
   const previewUrl = useMemo(() => {
@@ -199,6 +198,8 @@ export default function GraphShare() {
               <p className="max-w-md text-xs leading-relaxed text-muted-foreground">
                 {t('share.privacy_note')}
               </p>
+
+              <InvitePanel />
             </div>
           </div>
         )}

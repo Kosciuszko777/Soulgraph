@@ -70,6 +70,36 @@ inner rumor kind, never published in the clear.
 
 ---
 
+## Payment & entitlement tags (NIP-57)
+
+SoulGraph purchases are **NIP-57 zaps** from the buyer to the configured
+SoulGraph provider pubkey. The zap **request** (kind `9734`, signed by the buyer
+and embedded by the LNURL service in the kind `9735` receipt) carries SoulGraph
+tags so an entitlement can be verified against the exact product and price:
+
+| Tag | Meaning |
+| --- | --- |
+| `soulgraph_product` | Product id from `src/config/catalog.ts` (e.g. `complete_soulgraph`). |
+| `soulgraph_price_version` | Price version the product was bought at. |
+| `soulgraph_ref` | First-touch referral code (the referrer's npub). Self-referrals are omitted. |
+| `soulgraph_utm_source` / `_medium` / `_campaign` / `_content` / `_term` | Campaign attribution, carried verbatim. |
+
+An entitlement (`ZapReceiptEntitlementProvider`) is valid when a kind `9735`
+receipt exists, signed by the provider's receipt-signing pubkey (the LNURL
+endpoint's `nostrPubkey`), whose embedded zap request is signed by the current
+user, carries the matching `soulgraph_product` (and compatible
+`soulgraph_price_version`), and whose paid amount meets the product price within
+a configurable tolerance (`ENTITLEMENT_AMOUNT_TOLERANCE`). Receipts are cached in
+the vault and re-verified against relays on new devices.
+
+> These are multi-letter tags: they are **not** relay-indexed, and that is
+> intentional. Receipts are discovered by the single-letter `p` tag (recipient =
+> SoulGraph provider), then the SoulGraph tags are checked client-side during
+> verification. Attribution is a private fact between buyer and provider, not a
+> public discovery surface.
+
+---
+
 ## Revocation
 
 Per `docs/ARCHITECTURE.md §8`: stop delivering future versions, rotate affected facet

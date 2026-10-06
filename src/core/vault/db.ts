@@ -14,7 +14,7 @@ import type { FacetEnvelope } from './envelope';
 import type { Confidence, FacetKey, Provenance } from '@/core/graph/schema';
 
 export const VAULT_DB_NAME = 'soulgraph-vault';
-export const VAULT_DB_VERSION = 1;
+export const VAULT_DB_VERSION = 2;
 
 /** Identity metadata (never the secret key — that lives in the login layer). */
 export interface VaultIdentity {
@@ -100,6 +100,27 @@ export interface VaultAttributionRecord {
   captured_at: number;
 }
 
+/**
+ * A cached, verified entitlement. The source of truth is always the zap receipt
+ * on relays; this cache lets us answer "may this user access X?" instantly and
+ * offline after one successful verification. Re-verified on new devices by
+ * querying relays, so the cache is advisory — never a substitute for the fact.
+ */
+export interface VaultEntitlementRecord {
+  /** Composite key `${owner}:${product_id}`. */
+  id: string;
+  owner_pubkey: string;
+  product_id: string;
+  price_version: string;
+  source: 'zap_receipt' | 'issuer_event' | 'card_provider';
+  issued_at: number;
+  expires_at?: number;
+  /** Zap receipt (or issuer event) id that proved this entitlement. */
+  proof_ref: string;
+  /** When this cache entry was last confirmed against relays. */
+  verified_at: number;
+}
+
 interface VaultDB extends DBSchema {
   identity: { key: string; value: VaultIdentity };
   versions: {
@@ -128,6 +149,11 @@ interface VaultDB extends DBSchema {
     indexes: { by_owner: string };
   };
   attribution: { key: string; value: VaultAttributionRecord };
+  entitlements: {
+    key: string;
+    value: VaultEntitlementRecord;
+    indexes: { by_owner: string };
+  };
 }
 
 let dbPromise: Promise<IDBPDatabase<VaultDB>> | null = null;
@@ -136,26 +162,33 @@ let dbPromise: Promise<IDBPDatabase<VaultDB>> | null = null;
 export function getVaultDB(): Promise<IDBPDatabase<VaultDB>> {
   if (!dbPromise) {
     dbPromise = openDB<VaultDB>(VAULT_DB_NAME, VAULT_DB_VERSION, {
-      upgrade(db) {
-        db.createObjectStore('identity', { keyPath: 'pubkey' });
+      upgrade(db, oldVersion) {
+        if (oldVersion < 1) {
+          db.createObjectStore('identity', { keyPath: 'pubkey' });
 
-        const versions = db.createObjectStore('versions', { keyPath: 'id' });
-        versions.createIndex('by_owner', 'owner_pubkey');
+          const versions = db.createObjectStore('versions', { keyPath: 'id' });
+          versions.createIndex('by_owner', 'owner_pubkey');
 
-        const envelopes = db.createObjectStore('envelopes', { keyPath: 'id' });
-        envelopes.createIndex('by_owner', 'owner_pubkey');
-        envelopes.createIndex('by_version', 'version_id');
+          const envelopes = db.createObjectStore('envelopes', { keyPath: 'id' });
+          envelopes.createIndex('by_owner', 'owner_pubkey');
+          envelopes.createIndex('by_version', 'version_id');
 
-        const sessions = db.createObjectStore('sessions', { keyPath: 'id' });
-        sessions.createIndex('by_owner', 'owner_pubkey');
+          const sessions = db.createObjectStore('sessions', { keyPath: 'id' });
+          sessions.createIndex('by_owner', 'owner_pubkey');
 
-        const grants = db.createObjectStore('grants', { keyPath: 'id' });
-        grants.createIndex('by_owner', 'owner_pubkey');
+          const grants = db.createObjectStore('grants', { keyPath: 'id' });
+          grants.createIndex('by_owner', 'owner_pubkey');
 
-        const audit = db.createObjectStore('audit', { keyPath: 'id' });
-        audit.createIndex('by_owner', 'owner_pubkey');
+          const audit = db.createObjectStore('audit', { keyPath: 'id' });
+          audit.createIndex('by_owner', 'owner_pubkey');
 
-        db.createObjectStore('attribution', { keyPath: 'owner_pubkey' });
+          db.createObjectStore('attribution', { keyPath: 'owner_pubkey' });
+        }
+
+        if (oldVersion < 2) {
+          const entitlements = db.createObjectStore('entitlements', { keyPath: 'id' });
+          entitlements.createIndex('by_owner', 'owner_pubkey');
+        }
       },
     });
   }

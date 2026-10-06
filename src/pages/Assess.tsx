@@ -4,10 +4,12 @@ import { Lock } from 'lucide-react';
 import { AtlasLayout } from '@/components/shell/AtlasLayout';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
 import { AssessmentRunner } from '@/components/assessment/AssessmentRunner';
 import { useCurrentUser } from '@/hooks/useCurrentUser';
 import { useEntitlement } from '@/hooks/useEntitlement';
 import { useI18n } from '@/hooks/useI18n';
+import { COMPLETE_PRODUCT_ID } from '@/config/flags';
 
 /**
  * The Complete SoulGraph — the full assessment across all instruments.
@@ -19,7 +21,7 @@ import { useI18n } from '@/hooks/useI18n';
 export default function Assess() {
   const { t } = useI18n();
   const { user } = useCurrentUser();
-  const { complete: entitled, gated } = useEntitlement();
+  const { entitled, gated, loading } = useEntitlement(COMPLETE_PRODUCT_ID);
 
   useSeoMeta({
     title: `${t('page.assess.title')} · ${t('app.name')}`,
@@ -43,6 +45,14 @@ export default function Assess() {
       <div className="container px-4 py-12 sm:px-6 sm:py-16">
         {!user ? (
           <Gate icon body={t('assess.signin.body')} cta={t('nav.begin')} to="/begin" />
+        ) : gated && loading ? (
+          <Card className="mx-auto max-w-xl border-dashed bg-card/40">
+            <CardContent className="space-y-4 px-8 py-12 text-center">
+              <Skeleton className="mx-auto h-5 w-48" />
+              <Skeleton className="mx-auto h-4 w-64" />
+              <p className="text-sm text-muted-foreground">{t('assess.checking')}</p>
+            </CardContent>
+          </Card>
         ) : gated && !entitled ? (
           <Gate body={t('assess.locked.body')} cta={t('assess.locked.cta')} to="/unlock" />
         ) : (

@@ -17,7 +17,10 @@ import {
   type VaultSessionRecord,
   type VaultAuditRecord,
   type VaultGrantRecord,
+  type VaultAttributionRecord,
+  type VaultEntitlementRecord,
 } from './db';
+import type { Entitlement } from '@/core/entitlement/EntitlementProvider';
 import {
   sealFacet,
   openFacet,
@@ -398,4 +401,65 @@ export async function bindAttribution(
   const existing = await db.get('attribution', owner);
   if (existing) return; // first-touch wins
   await db.put('attribution', { owner_pubkey: owner, ...attribution });
+}
+
+/** Read the attribution bound to an owner, or undefined if none. */
+export async function getBoundAttribution(
+  owner: string,
+): Promise<VaultAttributionRecord | undefined> {
+  const db = await getVaultDB();
+  return db.get('attribution', owner);
+}
+
+/* ------------------------------ entitlements ------------------------------- */
+
+function entitlementId(owner: string, productId: string): string {
+  return `${owner}:${productId}`;
+}
+
+/**
+ * Cache a verified entitlement so the app can answer access questions instantly
+ * and offline. The zap receipt on relays remains the source of truth; this is
+ * a cache that is re-confirmed on new devices by re-querying relays.
+ */
+export async function cacheEntitlement(entitlement: Entitlement): Promise<void> {
+  const db = await getVaultDB();
+  const record: VaultEntitlementRecord = {
+    id: entitlementId(entitlement.owner_pubkey, entitlement.product_id),
+    owner_pubkey: entitlement.owner_pubkey,
+    product_id: entitlement.product_id,
+    price_version: entitlement.price_version,
+    source: entitlement.source,
+    issued_at: entitlement.issued_at,
+    expires_at: entitlement.expires_at,
+    proof_ref: entitlement.proof_ref,
+    verified_at: Math.floor(Date.now() / 1000),
+  };
+  await db.put('entitlements', record);
+}
+
+/** Read a single cached entitlement for an owner + product, or undefined. */
+export async function getCachedEntitlement(
+  owner: string,
+  productId: string,
+): Promise<VaultEntitlementRecord | undefined> {
+  const db = await getVaultDB();
+  return db.get('entitlements', entitlementId(owner, productId));
+}
+
+/** List all cached entitlements for an owner. */
+export async function listCachedEntitlements(
+  owner: string,
+): Promise<VaultEntitlementRecord[]> {
+  const db = await getVaultDB();
+  return db.getAllFromIndex('entitlements', 'by_owner', owner);
+}
+
+/** Remove a cached entitlement (e.g. after a failed re-verification). */
+export async function clearCachedEntitlement(
+  owner: string,
+  productId: string,
+): Promise<void> {
+  const db = await getVaultDB();
+  await db.delete('entitlements', entitlementId(owner, productId));
 }
