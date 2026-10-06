@@ -1,5 +1,11 @@
 # Project Overview
 
+**This project is SoulGraph, a privacy-first Human Intelligence Platform.** Before
+changing anything, read **`docs/SOULGRAPH.md`** (the product constitution) and
+**`docs/ARCHITECTURE.md`** (the technical constitution). They are binding: respect the
+architectural law, the layer boundaries, and the non-negotiable ethical boundaries.
+Custom Nostr kinds are documented in `docs/NIP-SOULGRAPH.md`.
+
 This project is a Nostr client application built with React 19.x, TailwindCSS 4.x, Vite, shadcn/ui, and Nostrify.
 
 ## Technology Stack
