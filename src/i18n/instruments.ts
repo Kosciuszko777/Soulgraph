@@ -1,0 +1,351 @@
+/**
+ * Instrument item text (i18n). Item prompts and scale labels live here, keyed
+ * to the instrument definitions in src/core/engine. ALL text is original and
+ * does NOT reproduce or paraphrase any proprietary instrument, nor use any
+ * trademarked instrument name.
+ *
+ * English is the default; German uses Swiss conventions ("ss", never "ß").
+ */
+
+export type InstrumentDict = Record<string, string>;
+
+/* ============================== ENGLISH =================================== */
+
+export const instrumentsEn: InstrumentDict = {
+  /* --- Jungian Preferences --- */
+  'instrument.jung.name': 'Jungian Preferences',
+  'instrument.jung.note': 'An interpretive lens from Jungian tradition — a tendency, not a box.',
+  'instrument.jung.scale.energy': 'Energy',
+  'instrument.jung.scale.energy.desc': 'Where attention and energy tend to flow — outward to people and activity, or inward to reflection.',
+  'instrument.jung.scale.perception': 'Perception',
+  'instrument.jung.scale.perception.desc': 'What you notice first — concrete detail and the present, or patterns and possibilities.',
+  'instrument.jung.scale.judgment': 'Judgment',
+  'instrument.jung.scale.judgment.desc': 'How you tend to decide — by logic and principle, or by values and impact on people.',
+  'instrument.jung.scale.lifestyle': 'Lifestyle',
+  'instrument.jung.scale.lifestyle.desc': 'How you prefer to live — planned and settled, or open and adaptable.',
+
+  // energy (high = extraverted)
+  'instrument.jung.item.energy_01': 'Spending time in a lively group leaves me more energised than drained.',
+  'instrument.jung.item.energy_02': 'After a busy social day I most need quiet time alone to recover.',
+  'instrument.jung.item.energy_03': 'I think out loud, working ideas through by talking them over with others.',
+  'instrument.jung.item.energy_04': 'I prefer to settle my thoughts privately before I share them.',
+  'instrument.jung.item.energy_05': 'I often start conversations with people I do not yet know.',
+  'instrument.jung.item.energy_06': 'A quiet evening at home usually appeals to me more than going out.',
+  'instrument.jung.item.energy_07': 'I feel at ease being the centre of attention in a room.',
+  'instrument.jung.item.energy_08': 'In large gatherings I tend to hang back and observe rather than mingle.',
+
+  // perception (high = sensing)
+  'instrument.jung.item.perception_01': 'I trust concrete facts and direct experience more than hunches.',
+  'instrument.jung.item.perception_02': 'I am quickly drawn to the big picture and future possibilities.',
+  'instrument.jung.item.perception_03': 'I notice practical details that others tend to overlook.',
+  'instrument.jung.item.perception_04': 'I would rather imagine how things could be than track how they are.',
+  'instrument.jung.item.perception_05': 'When learning something, I like to start with concrete, step-by-step examples.',
+  'instrument.jung.item.perception_06': 'My mind naturally jumps to connections and underlying patterns.',
+  'instrument.jung.item.perception_07': 'I rely on what has worked before more than on untested ideas.',
+  'instrument.jung.item.perception_08': 'I am more interested in what is possible than in what is already proven.',
+
+  // judgment (high = thinking)
+  'instrument.jung.item.judgment_01': 'When deciding, I put consistent logic ahead of how people will feel.',
+  'instrument.jung.item.judgment_02': 'I weigh the human impact of a choice before its logic.',
+  'instrument.jung.item.judgment_03': 'I find it easy to give frank critical feedback when it is warranted.',
+  'instrument.jung.item.judgment_04': 'Keeping harmony in a group matters more to me than being strictly right.',
+  'instrument.jung.item.judgment_05': 'I am convinced more by sound reasoning than by heartfelt appeals.',
+  'instrument.jung.item.judgment_06': 'I naturally sense what others are feeling and factor it into decisions.',
+  'instrument.jung.item.judgment_07': 'I try to stay objective and detached when analysing a problem.',
+  'instrument.jung.item.judgment_08': 'I would bend a rule to spare someone unnecessary hurt.',
+
+  // lifestyle (high = judging)
+  'instrument.jung.item.lifestyle_01': 'I like to settle plans early and feel uneasy leaving things open.',
+  'instrument.jung.item.lifestyle_02': 'I prefer to keep my options open rather than commit to a fixed plan.',
+  'instrument.jung.item.lifestyle_03': 'I make lists and work through them methodically.',
+  'instrument.jung.item.lifestyle_04': 'I often do my best work in a last-minute burst rather than steadily ahead of time.',
+  'instrument.jung.item.lifestyle_05': 'A tidy, organised space helps me think clearly.',
+  'instrument.jung.item.lifestyle_06': 'I enjoy improvising and adapting as a situation unfolds.',
+  'instrument.jung.item.lifestyle_07': 'I feel satisfied when a task is finished and closed off.',
+  'instrument.jung.item.lifestyle_08': 'Firm deadlines feel more like a constraint than a comfort to me.',
+
+  /* --- Enneagram --- */
+  'instrument.enneagram.name': 'Enneagram Pattern',
+  'instrument.enneagram.note': 'An interpretive map of recurring motivations — if your top two patterns are close, we will say the pattern is not yet clear.',
+  'instrument.enneagram.scale.1': 'The Improver',
+  'instrument.enneagram.scale.1.desc': 'Driven to get things right and live by clear principles.',
+  'instrument.enneagram.scale.2': 'The Helper',
+  'instrument.enneagram.scale.2.desc': 'Attuned to others’ needs and motivated to be of use.',
+  'instrument.enneagram.scale.3': 'The Achiever',
+  'instrument.enneagram.scale.3.desc': 'Focused on goals, progress and being effective.',
+  'instrument.enneagram.scale.4': 'The Individualist',
+  'instrument.enneagram.scale.4.desc': 'Seeks depth, meaning and authentic self-expression.',
+  'instrument.enneagram.scale.5': 'The Observer',
+  'instrument.enneagram.scale.5.desc': 'Values understanding, privacy and conserving energy.',
+  'instrument.enneagram.scale.6': 'The Guardian',
+  'instrument.enneagram.scale.6.desc': 'Alert to risk, loyal, and focused on security.',
+  'instrument.enneagram.scale.7': 'The Enthusiast',
+  'instrument.enneagram.scale.7.desc': 'Drawn to possibility, variety and keeping options open.',
+  'instrument.enneagram.scale.8': 'The Challenger',
+  'instrument.enneagram.scale.8.desc': 'Assertive, protective, and comfortable taking charge.',
+  'instrument.enneagram.scale.9': 'The Peacemaker',
+  'instrument.enneagram.scale.9.desc': 'Seeks calm, accord and a sense of inner steadiness.',
+
+  // type 1
+  'instrument.enneagram.item.t1_1': 'I hold myself to high standards and notice when things fall short.',
+  'instrument.enneagram.item.t1_2': 'I feel a quiet responsibility to improve what is around me.',
+  'instrument.enneagram.item.t1_3': 'Doing something the right way matters to me, even when no one is watching.',
+  'instrument.enneagram.item.t1_4': 'I rarely feel any inner pressure to correct mistakes.',
+  'instrument.enneagram.item.t1_5': 'I notice small errors that others let slide.',
+
+  // type 2
+  'instrument.enneagram.item.t2_1': 'I find it natural to sense what someone else needs.',
+  'instrument.enneagram.item.t2_2': 'Being needed by the people I care about means a great deal to me.',
+  'instrument.enneagram.item.t2_3': 'I often put others’ comfort ahead of my own.',
+  'instrument.enneagram.item.t2_4': 'I find it hard to notice when others need help.',
+  'instrument.enneagram.item.t2_5': 'I feel warmest when I am supporting someone.',
+
+  // type 3
+  'instrument.enneagram.item.t3_1': 'I set goals and feel driven to reach them.',
+  'instrument.enneagram.item.t3_2': 'I adapt how I present myself to succeed in different settings.',
+  'instrument.enneagram.item.t3_3': 'Being seen as effective and accomplished matters to me.',
+  'instrument.enneagram.item.t3_4': 'I rarely think about how my achievements look to others.',
+  'instrument.enneagram.item.t3_5': 'I stay focused on results and keep momentum going.',
+
+  // type 4
+  'instrument.enneagram.item.t4_1': 'I often feel that my inner experience is different from most people’s.',
+  'instrument.enneagram.item.t4_2': 'I am drawn to what is deep, authentic and personally meaningful.',
+  'instrument.enneagram.item.t4_3': 'My moods can colour my whole experience of a day.',
+  'instrument.enneagram.item.t4_4': 'I rarely dwell on my feelings or inner life.',
+  'instrument.enneagram.item.t4_5': 'I long to express something uniquely my own.',
+
+  // type 5
+  'instrument.enneagram.item.t5_1': 'I prefer to understand something thoroughly before I act.',
+  'instrument.enneagram.item.t5_2': 'I guard my time and energy carefully.',
+  'instrument.enneagram.item.t5_3': 'I feel most at ease with space to think on my own.',
+  'instrument.enneagram.item.t5_4': 'I happily share my thoughts before I have fully worked them out.',
+  'instrument.enneagram.item.t5_5': 'I am drawn to collecting knowledge for its own sake.',
+
+  // type 6
+  'instrument.enneagram.item.t6_1': 'I tend to anticipate what could go wrong and prepare for it.',
+  'instrument.enneagram.item.t6_2': 'Loyalty to people and commitments runs deep in me.',
+  'instrument.enneagram.item.t6_3': 'I feel steadier when I know who and what I can rely on.',
+  'instrument.enneagram.item.t6_4': 'I rarely worry about risks or worst-case outcomes.',
+  'instrument.enneagram.item.t6_5': 'I double-check things to make sure they are secure.',
+
+  // type 7
+  'instrument.enneagram.item.t7_1': 'I am quickly drawn to new experiences and possibilities.',
+  'instrument.enneagram.item.t7_2': 'I like to keep my options open and my plans flexible.',
+  'instrument.enneagram.item.t7_3': 'I naturally look for the upside in a situation.',
+  'instrument.enneagram.item.t7_4': 'I am content to stick with one thing for a long time.',
+  'instrument.enneagram.item.t7_5': 'I get restless when life feels repetitive.',
+
+  // type 8
+  'instrument.enneagram.item.t8_1': 'I am comfortable taking charge when something needs direction.',
+  'instrument.enneagram.item.t8_2': 'I speak directly and stand my ground.',
+  'instrument.enneagram.item.t8_3': 'I feel protective of people who cannot stand up for themselves.',
+  'instrument.enneagram.item.t8_4': 'I prefer to let others lead and avoid confrontation.',
+  'instrument.enneagram.item.t8_5': 'I would rather face a problem head-on than tiptoe around it.',
+
+  // type 9
+  'instrument.enneagram.item.t9_1': 'I go to some lengths to keep the peace around me.',
+  'instrument.enneagram.item.t9_2': 'I can easily see the merit in opposing points of view.',
+  'instrument.enneagram.item.t9_3': 'I value a calm, steady rhythm to my days.',
+  'instrument.enneagram.item.t9_4': 'I readily push my own agenda even when it causes friction.',
+  'instrument.enneagram.item.t9_5': 'I tend to go along with others to avoid conflict.',
+
+  /* --- Life Pattern --- */
+  'instrument.life_pattern.name': 'Life Pattern',
+  'instrument.life_pattern.note': 'Experimental SoulGraph. Numerological patterns have no empirical validation and are offered only as a reflective lens.',
+  'instrument.life_pattern.scale.independence': 'Independence',
+  'instrument.life_pattern.scale.independence.desc': 'A pull toward self-direction and standing on your own.',
+  'instrument.life_pattern.scale.creativity': 'Creativity',
+  'instrument.life_pattern.scale.creativity.desc': 'A pull toward making, imagining and original expression.',
+  'instrument.life_pattern.scale.service': 'Service',
+  'instrument.life_pattern.scale.service.desc': 'A pull toward contributing to others and the common good.',
+  'instrument.life_pattern.scale.discipline': 'Discipline',
+  'instrument.life_pattern.scale.discipline.desc': 'A pull toward structure, follow-through and mastery.',
+  'instrument.life_pattern.scale.trust': 'Trust',
+  'instrument.life_pattern.scale.trust.desc': 'A pull toward openness, connection and faith in others.',
+  'instrument.life_pattern.scale.transformation': 'Transformation',
+  'instrument.life_pattern.scale.transformation.desc': 'A pull toward change, renewal and reinvention.',
+
+  'instrument.life_pattern.item.independence_1': 'Making my own choices matters more to me than fitting in.',
+  'instrument.life_pattern.item.independence_2': 'I would rather find my own way than follow a well-worn path.',
+  'instrument.life_pattern.item.independence_3': 'I feel most comfortable when someone else sets the direction.',
+  'instrument.life_pattern.item.independence_4': 'I value being able to rely on myself above almost anything.',
+  'instrument.life_pattern.item.creativity_1': 'I feel alive when I am making or imagining something new.',
+  'instrument.life_pattern.item.creativity_2': 'I often see original possibilities where others see routine.',
+  'instrument.life_pattern.item.creativity_3': 'I have little interest in creative or artistic pursuits.',
+  'instrument.life_pattern.item.creativity_4': 'Expressing myself in some original way is important to me.',
+  'instrument.life_pattern.item.service_1': 'Contributing to others gives my life a sense of purpose.',
+  'instrument.life_pattern.item.service_2': 'I feel most fulfilled when my work helps people.',
+  'instrument.life_pattern.item.service_3': 'I rarely think about whether my efforts benefit anyone else.',
+  'instrument.life_pattern.item.discipline_1': 'I keep working toward a goal long after the first excitement fades.',
+  'instrument.life_pattern.item.discipline_2': 'Steady habits and structure help me do my best.',
+  'instrument.life_pattern.item.discipline_3': 'I find it hard to stick with routines and commitments.',
+  'instrument.life_pattern.item.trust_1': 'I tend to assume the best about people until shown otherwise.',
+  'instrument.life_pattern.item.trust_2': 'I open up to others fairly readily.',
+  'instrument.life_pattern.item.trust_3': 'I stay guarded until people have thoroughly earned my trust.',
+  'instrument.life_pattern.item.transformation_1': 'I am drawn to periods of deep change and reinvention.',
+  'instrument.life_pattern.item.transformation_2': 'I have reshaped who I am more than once in my life.',
+  'instrument.life_pattern.item.transformation_3': 'I prefer life to stay much the same over time.',
+};
+
+/* =============================== GERMAN =================================== */
+/* Swiss conventions — "ss", never "ß". */
+
+export const instrumentsDe: InstrumentDict = {
+  'instrument.jung.name': 'Jungsche Präferenzen',
+  'instrument.jung.note': 'Eine interpretative Linse aus der Jungschen Tradition — eine Tendenz, keine Schublade.',
+  'instrument.jung.scale.energy': 'Energie',
+  'instrument.jung.scale.energy.desc': 'Wohin Aufmerksamkeit und Energie fliessen — nach aussen zu Menschen und Aktivität, oder nach innen zur Reflexion.',
+  'instrument.jung.scale.perception': 'Wahrnehmung',
+  'instrument.jung.scale.perception.desc': 'Was du zuerst bemerkst — konkrete Details und die Gegenwart, oder Muster und Möglichkeiten.',
+  'instrument.jung.scale.judgment': 'Urteil',
+  'instrument.jung.scale.judgment.desc': 'Wie du tendenziell entscheidest — nach Logik und Prinzip, oder nach Werten und Wirkung auf Menschen.',
+  'instrument.jung.scale.lifestyle': 'Lebensstil',
+  'instrument.jung.scale.lifestyle.desc': 'Wie du leben möchtest — geplant und festgelegt, oder offen und anpassungsfähig.',
+
+  'instrument.jung.item.energy_01': 'Zeit in einer lebhaften Gruppe gibt mir eher Energie, als dass sie mich auslaugt.',
+  'instrument.jung.item.energy_02': 'Nach einem geselligen Tag brauche ich am meisten ruhige Zeit für mich, um mich zu erholen.',
+  'instrument.jung.item.energy_03': 'Ich denke laut und entwickle Ideen, indem ich sie mit anderen bespreche.',
+  'instrument.jung.item.energy_04': 'Ich ordne meine Gedanken lieber für mich, bevor ich sie teile.',
+  'instrument.jung.item.energy_05': 'Ich beginne oft Gespräche mit Menschen, die ich noch nicht kenne.',
+  'instrument.jung.item.energy_06': 'Ein ruhiger Abend zu Hause gefällt mir meist mehr als auszugehen.',
+  'instrument.jung.item.energy_07': 'Es ist mir angenehm, im Mittelpunkt eines Raumes zu stehen.',
+  'instrument.jung.item.energy_08': 'In grossen Runden halte ich mich eher zurück und beobachte.',
+
+  'instrument.jung.item.perception_01': 'Ich vertraue konkreten Fakten und direkter Erfahrung mehr als Ahnungen.',
+  'instrument.jung.item.perception_02': 'Mich zieht es schnell zum Gesamtbild und zu künftigen Möglichkeiten.',
+  'instrument.jung.item.perception_03': 'Ich bemerke praktische Details, die andere übersehen.',
+  'instrument.jung.item.perception_04': 'Ich stelle mir lieber vor, wie etwas sein könnte, als zu verfolgen, wie es ist.',
+  'instrument.jung.item.perception_05': 'Beim Lernen beginne ich gern mit konkreten Schritt-für-Schritt-Beispielen.',
+  'instrument.jung.item.perception_06': 'Mein Denken springt von selbst zu Zusammenhängen und zugrunde liegenden Mustern.',
+  'instrument.jung.item.perception_07': 'Ich verlasse mich mehr auf Bewährtes als auf unerprobte Ideen.',
+  'instrument.jung.item.perception_08': 'Mich interessiert mehr, was möglich ist, als was bereits bewiesen ist.',
+
+  'instrument.jung.item.judgment_01': 'Beim Entscheiden stelle ich stimmige Logik über die Gefühle der Beteiligten.',
+  'instrument.jung.item.judgment_02': 'Ich wäge die menschliche Wirkung einer Wahl vor ihrer Logik ab.',
+  'instrument.jung.item.judgment_03': 'Es fällt mir leicht, offen kritisches Feedback zu geben, wenn es angebracht ist.',
+  'instrument.jung.item.judgment_04': 'Harmonie in einer Gruppe ist mir wichtiger, als strikt recht zu haben.',
+  'instrument.jung.item.judgment_05': 'Mich überzeugt stichhaltige Argumentation mehr als ein Appell ans Herz.',
+  'instrument.jung.item.judgment_06': 'Ich spüre von Natur aus, was andere fühlen, und beziehe es in Entscheidungen ein.',
+  'instrument.jung.item.judgment_07': 'Ich bleibe sachlich und distanziert, wenn ich ein Problem analysiere.',
+  'instrument.jung.item.judgment_08': 'Ich würde eine Regel beugen, um jemandem unnötiges Leid zu ersparen.',
+
+  'instrument.jung.item.lifestyle_01': 'Ich lege Pläne gern früh fest und fühle mich unwohl, wenn Dinge offen bleiben.',
+  'instrument.jung.item.lifestyle_02': 'Ich halte mir lieber Optionen offen, als mich auf einen festen Plan zu verpflichten.',
+  'instrument.jung.item.lifestyle_03': 'Ich mache Listen und arbeite sie methodisch ab.',
+  'instrument.jung.item.lifestyle_04': 'Ich arbeite oft am besten im letzten Moment statt stetig im Voraus.',
+  'instrument.jung.item.lifestyle_05': 'Ein aufgeräumter, geordneter Raum hilft mir, klar zu denken.',
+  'instrument.jung.item.lifestyle_06': 'Ich improvisiere gern und passe mich an, wie sich eine Situation entwickelt.',
+  'instrument.jung.item.lifestyle_07': 'Ich bin zufrieden, wenn eine Aufgabe fertig und abgeschlossen ist.',
+  'instrument.jung.item.lifestyle_08': 'Feste Fristen fühlen sich für mich eher einengend als beruhigend an.',
+
+  'instrument.enneagram.name': 'Enneagramm-Muster',
+  'instrument.enneagram.note': 'Eine interpretative Karte wiederkehrender Beweggründe — liegen deine zwei stärksten Muster nah beieinander, sagen wir, das Muster sei noch nicht klar.',
+  'instrument.enneagram.scale.1': 'Die Verbessernde',
+  'instrument.enneagram.scale.1.desc': 'Angetrieben, Dinge richtig zu machen und nach klaren Prinzipien zu leben.',
+  'instrument.enneagram.scale.2': 'Die Helfende',
+  'instrument.enneagram.scale.2.desc': 'Feinfühlig für die Bedürfnisse anderer und motiviert, nützlich zu sein.',
+  'instrument.enneagram.scale.3': 'Die Erreichende',
+  'instrument.enneagram.scale.3.desc': 'Fokussiert auf Ziele, Fortschritt und Wirksamkeit.',
+  'instrument.enneagram.scale.4': 'Die Individualistin',
+  'instrument.enneagram.scale.4.desc': 'Sucht Tiefe, Bedeutung und echten Selbstausdruck.',
+  'instrument.enneagram.scale.5': 'Die Beobachtende',
+  'instrument.enneagram.scale.5.desc': 'Schätzt Verstehen, Rückzug und das Bewahren von Energie.',
+  'instrument.enneagram.scale.6': 'Die Bewahrende',
+  'instrument.enneagram.scale.6.desc': 'Wachsam gegenüber Risiken, loyal und auf Sicherheit bedacht.',
+  'instrument.enneagram.scale.7': 'Die Begeisterte',
+  'instrument.enneagram.scale.7.desc': 'Angezogen von Möglichkeiten, Vielfalt und offenen Optionen.',
+  'instrument.enneagram.scale.8': 'Die Herausfordernde',
+  'instrument.enneagram.scale.8.desc': 'Bestimmt, beschützend und bereit, die Führung zu übernehmen.',
+  'instrument.enneagram.scale.9': 'Die Friedensstiftende',
+  'instrument.enneagram.scale.9.desc': 'Sucht Ruhe, Einklang und inneren Halt.',
+
+  'instrument.enneagram.item.t1_1': 'Ich habe hohe Ansprüche an mich und bemerke, wenn etwas nicht genügt.',
+  'instrument.enneagram.item.t1_2': 'Ich fühle eine stille Verantwortung, zu verbessern, was mich umgibt.',
+  'instrument.enneagram.item.t1_3': 'Etwas richtig zu tun ist mir wichtig, auch wenn niemand zusieht.',
+  'instrument.enneagram.item.t1_4': 'Ich verspüre kaum inneren Druck, Fehler zu korrigieren.',
+  'instrument.enneagram.item.t1_5': 'Ich bemerke kleine Fehler, über die andere hinwegsehen.',
+
+  'instrument.enneagram.item.t2_1': 'Es fällt mir leicht zu spüren, was jemand anderes braucht.',
+  'instrument.enneagram.item.t2_2': 'Von den Menschen, die mir wichtig sind, gebraucht zu werden, bedeutet mir viel.',
+  'instrument.enneagram.item.t2_3': 'Ich stelle das Wohl anderer oft über mein eigenes.',
+  'instrument.enneagram.item.t2_4': 'Es fällt mir schwer zu bemerken, wenn andere Hilfe brauchen.',
+  'instrument.enneagram.item.t2_5': 'Am wärmsten fühle ich mich, wenn ich jemanden unterstütze.',
+
+  'instrument.enneagram.item.t3_1': 'Ich setze mir Ziele und fühle mich angetrieben, sie zu erreichen.',
+  'instrument.enneagram.item.t3_2': 'Ich passe an, wie ich mich zeige, um in verschiedenen Umfeldern erfolgreich zu sein.',
+  'instrument.enneagram.item.t3_3': 'Als wirksam und erfolgreich gesehen zu werden ist mir wichtig.',
+  'instrument.enneagram.item.t3_4': 'Ich denke selten darüber nach, wie meine Erfolge auf andere wirken.',
+  'instrument.enneagram.item.t3_5': 'Ich bleibe auf Ergebnisse fokussiert und halte den Schwung.',
+
+  'instrument.enneagram.item.t4_1': 'Ich empfinde mein Inneres oft als anders als das der meisten Menschen.',
+  'instrument.enneagram.item.t4_2': 'Mich zieht an, was tief, echt und persönlich bedeutsam ist.',
+  'instrument.enneagram.item.t4_3': 'Meine Stimmungen können mein ganzes Erleben eines Tages einfärben.',
+  'instrument.enneagram.item.t4_4': 'Ich verweile selten bei meinen Gefühlen oder meinem Innenleben.',
+  'instrument.enneagram.item.t4_5': 'Ich sehne mich danach, etwas ganz Eigenes auszudrücken.',
+
+  'instrument.enneagram.item.t5_1': 'Ich verstehe etwas lieber gründlich, bevor ich handle.',
+  'instrument.enneagram.item.t5_2': 'Ich hüte meine Zeit und Energie sorgfältig.',
+  'instrument.enneagram.item.t5_3': 'Am wohlsten ist mir mit Raum, allein zu denken.',
+  'instrument.enneagram.item.t5_4': 'Ich teile meine Gedanken gern, bevor ich sie ganz durchdacht habe.',
+  'instrument.enneagram.item.t5_5': 'Mich reizt es, Wissen um seiner selbst willen zu sammeln.',
+
+  'instrument.enneagram.item.t6_1': 'Ich ahne voraus, was schiefgehen könnte, und bereite mich darauf vor.',
+  'instrument.enneagram.item.t6_2': 'Loyalität zu Menschen und Zusagen sitzt tief in mir.',
+  'instrument.enneagram.item.t6_3': 'Ich fühle mich sicherer, wenn ich weiss, worauf ich mich verlassen kann.',
+  'instrument.enneagram.item.t6_4': 'Ich sorge mich selten um Risiken oder schlimmste Fälle.',
+  'instrument.enneagram.item.t6_5': 'Ich prüfe Dinge doppelt, damit sie sicher sind.',
+
+  'instrument.enneagram.item.t7_1': 'Mich ziehen neue Erfahrungen und Möglichkeiten schnell an.',
+  'instrument.enneagram.item.t7_2': 'Ich halte meine Optionen offen und meine Pläne flexibel.',
+  'instrument.enneagram.item.t7_3': 'Ich suche von Natur aus das Positive in einer Lage.',
+  'instrument.enneagram.item.t7_4': 'Ich bleibe zufrieden lange bei ein und derselben Sache.',
+  'instrument.enneagram.item.t7_5': 'Ich werde unruhig, wenn das Leben sich wiederholt anfühlt.',
+
+  'instrument.enneagram.item.t8_1': 'Es ist mir angenehm, die Führung zu übernehmen, wenn etwas Richtung braucht.',
+  'instrument.enneagram.item.t8_2': 'Ich spreche direkt und stehe für meine Position ein.',
+  'instrument.enneagram.item.t8_3': 'Ich fühle mich schützend für Menschen, die sich nicht wehren können.',
+  'instrument.enneagram.item.t8_4': 'Ich überlasse anderen lieber die Führung und meide Konfrontation.',
+  'instrument.enneagram.item.t8_5': 'Ich gehe ein Problem lieber direkt an, als darum herumzuschleichen.',
+
+  'instrument.enneagram.item.t9_1': 'Ich unternehme einiges, um den Frieden um mich herum zu wahren.',
+  'instrument.enneagram.item.t9_2': 'Ich kann gut das Gute in gegensätzlichen Sichtweisen sehen.',
+  'instrument.enneagram.item.t9_3': 'Ich schätze einen ruhigen, steten Rhythmus in meinen Tagen.',
+  'instrument.enneagram.item.t9_4': 'Ich setze mein eigenes Anliegen auch dann durch, wenn es Reibung verursacht.',
+  'instrument.enneagram.item.t9_5': 'Ich füge mich eher, um Konflikte zu vermeiden.',
+
+  'instrument.life_pattern.name': 'Lebensmuster',
+  'instrument.life_pattern.note': 'Experimentell (SoulGraph). Numerologische Muster haben keine empirische Validierung und werden nur als reflektierende Linse angeboten.',
+  'instrument.life_pattern.scale.independence': 'Unabhängigkeit',
+  'instrument.life_pattern.scale.independence.desc': 'Ein Zug zu Selbstbestimmung und darauf, auf eigenen Füssen zu stehen.',
+  'instrument.life_pattern.scale.creativity': 'Kreativität',
+  'instrument.life_pattern.scale.creativity.desc': 'Ein Zug zum Gestalten, Vorstellen und originellen Ausdruck.',
+  'instrument.life_pattern.scale.service': 'Dienst',
+  'instrument.life_pattern.scale.service.desc': 'Ein Zug dazu, zu anderen und zum Gemeinwohl beizutragen.',
+  'instrument.life_pattern.scale.discipline': 'Disziplin',
+  'instrument.life_pattern.scale.discipline.desc': 'Ein Zug zu Struktur, Durchhalten und Meisterschaft.',
+  'instrument.life_pattern.scale.trust': 'Vertrauen',
+  'instrument.life_pattern.scale.trust.desc': 'Ein Zug zu Offenheit, Verbindung und Vertrauen in andere.',
+  'instrument.life_pattern.scale.transformation': 'Wandlung',
+  'instrument.life_pattern.scale.transformation.desc': 'Ein Zug zu Veränderung, Erneuerung und Neuerfindung.',
+
+  'instrument.life_pattern.item.independence_1': 'Eigene Entscheidungen zu treffen ist mir wichtiger als dazuzugehören.',
+  'instrument.life_pattern.item.independence_2': 'Ich finde lieber meinen eigenen Weg, als einen ausgetretenen Pfad zu gehen.',
+  'instrument.life_pattern.item.independence_3': 'Am wohlsten fühle ich mich, wenn jemand anderes die Richtung vorgibt.',
+  'instrument.life_pattern.item.independence_4': 'Mich auf mich selbst verlassen zu können schätze ich über fast alles.',
+  'instrument.life_pattern.item.creativity_1': 'Ich fühle mich lebendig, wenn ich etwas Neues gestalte oder mir ausdenke.',
+  'instrument.life_pattern.item.creativity_2': 'Ich sehe oft originelle Möglichkeiten, wo andere Routine sehen.',
+  'instrument.life_pattern.item.creativity_3': 'Kreative oder künstlerische Tätigkeiten interessieren mich kaum.',
+  'instrument.life_pattern.item.creativity_4': 'Mich auf eine originelle Weise auszudrücken ist mir wichtig.',
+  'instrument.life_pattern.item.service_1': 'Zu anderen beizutragen gibt meinem Leben Sinn.',
+  'instrument.life_pattern.item.service_2': 'Am erfülltesten bin ich, wenn meine Arbeit Menschen hilft.',
+  'instrument.life_pattern.item.service_3': 'Ich denke selten darüber nach, ob meine Mühe jemandem nützt.',
+  'instrument.life_pattern.item.discipline_1': 'Ich arbeite auf ein Ziel hin, lange nachdem die erste Begeisterung verflogen ist.',
+  'instrument.life_pattern.item.discipline_2': 'Stete Gewohnheiten und Struktur helfen mir, mein Bestes zu geben.',
+  'instrument.life_pattern.item.discipline_3': 'Es fällt mir schwer, bei Routinen und Zusagen zu bleiben.',
+  'instrument.life_pattern.item.trust_1': 'Ich nehme eher das Beste über Menschen an, bis sich das Gegenteil zeigt.',
+  'instrument.life_pattern.item.trust_2': 'Ich öffne mich anderen recht bereitwillig.',
+  'instrument.life_pattern.item.trust_3': 'Ich bleibe zurückhaltend, bis Menschen mein Vertrauen gründlich verdient haben.',
+  'instrument.life_pattern.item.transformation_1': 'Mich ziehen Phasen tiefen Wandels und der Neuerfindung an.',
+  'instrument.life_pattern.item.transformation_2': 'Ich habe mehr als einmal im Leben neu geformt, wer ich bin.',
+  'instrument.life_pattern.item.transformation_3': 'Ich mag es, wenn das Leben über die Zeit weitgehend gleich bleibt.',
+};

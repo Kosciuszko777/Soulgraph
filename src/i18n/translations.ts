@@ -150,4 +150,9 @@ const de: Dict = {
   'lang.toggle': 'Sprache',
 };
 
-export const TRANSLATIONS: Record<Locale, Dict> = { en, de };
+import { instrumentsEn, instrumentsDe } from './instruments';
+
+export const TRANSLATIONS: Record<Locale, Dict> = {
+  en: { ...en, ...instrumentsEn },
+  de: { ...de, ...instrumentsDe },
+};
