@@ -1,25 +1,26 @@
 /**
  * AssessmentRunner — the Assess step of the core loop.
  *
- * Presents demo (or full) items one at a time, grouped implicitly by
- * instrument, with honest evidence labels and instrument notes. On completion
- * it scores on-device (deterministic engine), seals each facet, and persists an
- * immutable version — then hands off to the SoulGraph view.
+ * Presents items one at a time with honest evidence labels and instrument
+ * notes. In full mode it shows per-instrument progress, resumes an existing
+ * draft, and never re-asks an answered item. On completion it scores on-device,
+ * seals each facet, and persists a new immutable version — then hands off.
  *
  * Nothing is sent anywhere. All computation is local. See docs/ARCHITECTURE.md.
  */
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, ArrowRight, Loader2, Lock, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Card, CardContent } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
 import { EvidenceBadge } from '@/components/assessment/EvidenceBadge';
 import { LikertScale } from '@/components/assessment/LikertScale';
+import { InstrumentProgressBar } from '@/components/assessment/InstrumentProgressBar';
 import { useAssessment, type AssessmentMode } from '@/hooks/useAssessment';
 import { useI18n } from '@/hooks/useI18n';
-import { cn } from '@/lib/utils';
 
 export function AssessmentRunner({
   mode,
@@ -31,33 +32,42 @@ export function AssessmentRunner({
   const { t } = useI18n();
   const navigate = useNavigate();
   const {
+    initializing,
     items,
     answers,
     answer,
     answeredCount,
     total,
+    instrumentProgress,
     complete,
     saving,
     error,
     canPersist,
+    resumed,
     finish,
   } = useAssessment(mode);
 
   const [index, setIndex] = useState(0);
   const [done, setDone] = useState(false);
 
+  // When resuming, jump to the first unanswered item.
+  useEffect(() => {
+    if (initializing || items.length === 0) return;
+    const firstUnanswered = items.findIndex(({ item }) => answers[item.id] === undefined);
+    setIndex(firstUnanswered === -1 ? items.length - 1 : firstUnanswered);
+    // Only runs once items settle after init.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initializing, items.length]);
+
   const current = items[index];
   const atLast = index >= total - 1;
-  const progress = total > 0 ? Math.round((answeredCount / total) * 100) : 0;
+  const progress = total > 0 ? Math.round((answeredCount / total) * 100) : 100;
 
-  // Instrument changes mark a new "chapter" — show its note once per chapter.
   const isFirstOfInstrument = useMemo(() => {
     if (!current) return false;
     const prev = items[index - 1];
     return !prev || prev.instrument.id !== current.instrument.id;
   }, [current, items, index]);
-
-  if (!current && !done) return null;
 
   async function handleFinish() {
     const versionId = await finish();
@@ -65,6 +75,16 @@ export function AssessmentRunner({
       setDone(true);
       onComplete?.(versionId);
     }
+  }
+
+  // ---- Loading prior answers / draft --------------------------------------
+  if (initializing) {
+    return (
+      <div className="mx-auto max-w-2xl space-y-4">
+        <Skeleton className="h-2 w-full rounded-full" />
+        <Skeleton className="h-48 w-full rounded-xl" />
+      </div>
+    );
   }
 
   // ---- Completed state -----------------------------------------------------
@@ -77,9 +97,7 @@ export function AssessmentRunner({
           </div>
           <div className="space-y-2">
             <h2 className="font-display text-2xl">{t('assessment.done.title')}</h2>
-            <p className="leading-relaxed text-muted-foreground">
-              {t('assessment.done.body')}
-            </p>
+            <p className="leading-relaxed text-muted-foreground">{t('assessment.done.body')}</p>
           </div>
           <Button size="lg" onClick={() => navigate('/graph')}>
             {t('assessment.done.cta')}
@@ -90,11 +108,52 @@ export function AssessmentRunner({
     );
   }
 
+  // ---- Everything already answered (full mode) — straight to finish --------
+  if (total === 0) {
+    return (
+      <Card className="mx-auto max-w-xl border-hairline bg-card/60">
+        <CardContent className="space-y-6 px-8 py-12 text-center">
+          <h2 className="font-display text-2xl">{t('assessment.allanswered.title')}</h2>
+          <p className="leading-relaxed text-muted-foreground">
+            {t('assessment.allanswered.body')}
+          </p>
+          <Button size="lg" onClick={handleFinish} disabled={saving || !canPersist}>
+            {saving ? (
+              <>
+                <Loader2 className="mr-1 h-4 w-4 animate-spin" />
+                {t('assessment.nav.scoring')}
+              </>
+            ) : (
+              <>
+                {t('assessment.nav.finish')}
+                <Sparkles className="ml-1 h-4 w-4" />
+              </>
+            )}
+          </Button>
+          {error && <p className="text-center text-xs text-destructive">{error}</p>}
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (!current) return null;
   const selected = answers[current.item.id];
 
   return (
     <div className="mx-auto max-w-2xl">
-      {/* Progress header */}
+      {/* Per-instrument progress (full mode) */}
+      {mode === 'full' && (
+        <div className="mb-8">
+          <InstrumentProgressBar instruments={instrumentProgress} />
+          {resumed && (
+            <p className="atlas-label mt-3 text-center text-cyan">
+              {t('assessment.resumed')}
+            </p>
+          )}
+        </div>
+      )}
+
+      {/* Overall progress header */}
       <div className="mb-8">
         <div className="mb-3 flex items-center justify-between">
           <span className="atlas-label">
@@ -135,7 +194,6 @@ export function AssessmentRunner({
             value={selected}
             onChange={(value) => {
               answer(current.item.id, value);
-              // Auto-advance after a beat, unless we're on the last item.
               if (!atLast) {
                 window.setTimeout(() => setIndex((i) => Math.min(i + 1, total - 1)), 180);
               }
@@ -187,8 +245,13 @@ export function AssessmentRunner({
           <Lock className="h-3 w-3" />
           {t('assessment.footer.local')}
         </p>
+        {mode === 'full' && (
+          <p className="text-center text-xs text-muted-foreground">
+            {t('assessment.footer.resume')}
+          </p>
+        )}
         {!canPersist && (
-          <p className={cn('text-center text-xs text-destructive')}>
+          <p className="text-center text-xs text-destructive">
             {t('assessment.footer.no_encrypt')}
           </p>
         )}

@@ -270,6 +270,87 @@ export async function loadSession<T = unknown>(
   return openFacet<T>(record.envelope, owner, wrapper);
 }
 
+/* ----------------------------- in-progress draft --------------------------- */
+/*
+ * A single resumable draft per owner (the "continue where you left off" state
+ * for the full assessment). Stored encrypted, like any session, under a stable
+ * id so it can be found, overwritten, and cleared on completion.
+ */
+
+function progressId(owner: string): string {
+  return `${owner}:progress`;
+}
+
+/** Save (overwrite) the owner's in-progress full-assessment answers, encrypted. */
+export async function saveProgress(
+  owner: string,
+  payload: unknown,
+  wrapper: KeyWrapper,
+): Promise<void> {
+  const envelope = await sealFacet(payload, owner, wrapper);
+  const db = await getVaultDB();
+  await db.put('sessions', {
+    id: progressId(owner),
+    owner_pubkey: owner,
+    envelope,
+    created_at: Math.floor(Date.now() / 1000),
+    completed_at: undefined,
+  });
+}
+
+/** Load the owner's in-progress draft, or null if there is none. */
+export async function loadProgress<T = unknown>(
+  owner: string,
+  wrapper: KeyWrapper,
+): Promise<T | null> {
+  return loadSession<T>(owner, progressId(owner), wrapper);
+}
+
+/** Whether an in-progress draft exists (no decryption needed). */
+export async function hasProgress(owner: string): Promise<boolean> {
+  const db = await getVaultDB();
+  const record = await db.get('sessions', progressId(owner));
+  return Boolean(record);
+}
+
+/** Remove the in-progress draft (e.g. after completion). */
+export async function clearProgress(owner: string): Promise<void> {
+  const db = await getVaultDB();
+  await db.delete('sessions', progressId(owner));
+}
+
+/**
+ * Collect the owner's known prior answers across completed sessions, so the
+ * full assessment never re-asks a demo (or earlier) item. Returns a flat
+ * map of item_id → value. Requires decryption, so a wrapper is needed.
+ */
+export async function loadPriorAnswers(
+  owner: string,
+  wrapper: KeyWrapper,
+): Promise<Record<string, number | 'A' | 'B' | string[]>> {
+  const sessions = await listSessions(owner);
+  const answers: Record<string, number | 'A' | 'B' | string[]> = {};
+  // Oldest first so newer answers win on conflict.
+  const completed = sessions
+    .filter((s) => s.completed_at)
+    .sort((a, b) => (a.completed_at ?? 0) - (b.completed_at ?? 0));
+  for (const session of completed) {
+    try {
+      const set = await openFacet<{ responses?: { item_id: string; value: number | 'A' | 'B' | string[] }[] }>(
+        session.envelope,
+        owner,
+        wrapper,
+      );
+      for (const r of set.responses ?? []) {
+        answers[r.item_id] = r.value;
+      }
+    } catch {
+      // Skip any session we can't open; never block the user on one bad record.
+    }
+  }
+  return answers;
+}
+
 /* --------------------------------- grants ---------------------------------- */
 
 export async function listGrants(owner: string): Promise<VaultGrantRecord[]> {

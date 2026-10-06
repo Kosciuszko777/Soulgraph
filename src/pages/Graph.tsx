@@ -1,36 +1,37 @@
 import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useSeoMeta } from '@unhead/react';
-import { ArrowRight, Loader2, Lock } from 'lucide-react';
+import { ArrowRight, FileText, Loader2, Lock, Share2 } from 'lucide-react';
 import { AtlasLayout } from '@/components/shell/AtlasLayout';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { GraphFacets } from '@/components/graph/GraphFacets';
+import { ConstellationFigure } from '@/components/graph/Constellation';
+import { InterpretationSections } from '@/components/graph/InterpretationSections';
 import { useCurrentUser } from '@/hooks/useCurrentUser';
 import { useVault } from '@/hooks/useVault';
+import { useInterpretation } from '@/hooks/useInterpretation';
 import { useI18n } from '@/hooks/useI18n';
 
 export default function Graph() {
   const { t } = useI18n();
   const { user } = useCurrentUser();
   const { state, currentGraph, loading, unlock } = useVault();
+  const interpretation = useInterpretation(currentGraph);
 
   useSeoMeta({
     title: `${t('page.graph.title')} · ${t('app.name')}`,
     description: t('page.graph.body'),
   });
 
-  // Auto-decrypt into memory when we have locked data and a signer is ready.
   useEffect(() => {
     if (user && state === 'locked') {
       void unlock();
     }
   }, [user, state, unlock]);
 
-  const confidencePct = currentGraph
-    ? Math.round(currentGraph.confidence.overall * 100)
-    : 0;
+  const confidencePct = currentGraph ? Math.round(currentGraph.confidence.overall * 100) : 0;
 
   return (
     <AtlasLayout>
@@ -50,10 +51,16 @@ export default function Graph() {
         ) : loading || state === 'unlocking' ? (
           <GraphSkeleton />
         ) : currentGraph ? (
-          <div className="space-y-8">
-            {/* Overall confidence + honest framing */}
-            <Card className="border-hairline bg-card/60">
-              <CardContent className="flex flex-col gap-4 px-6 py-6 sm:flex-row sm:items-center sm:justify-between">
+          <div className="space-y-10">
+            {/* Constellation hero + confidence + actions */}
+            <div className="grid gap-8 lg:grid-cols-[1fr_1.1fr] lg:items-center">
+              <div className="constellation-reveal mx-auto w-full max-w-sm overflow-hidden rounded-2xl border border-hairline shadow-lg">
+                <div className="aspect-square">
+                  <ConstellationFigure graph={currentGraph} />
+                </div>
+              </div>
+
+              <div className="space-y-5">
                 <div className="flex items-center gap-4">
                   <div className="flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-xl border border-hairline bg-background">
                     <span className="atlas-data text-lg text-primary">{confidencePct}%</span>
@@ -63,16 +70,35 @@ export default function Graph() {
                     <p className="text-sm text-muted-foreground">{t('graph.summary.scaled')}</p>
                   </div>
                 </div>
-                <Button variant="outline" asChild>
-                  <Link to="/begin">
-                    {t('graph.summary.full_cta')}
-                    <ArrowRight className="ml-1 h-4 w-4" />
-                  </Link>
-                </Button>
-              </CardContent>
-            </Card>
 
+                <div className="flex flex-wrap gap-3">
+                  <Button asChild>
+                    <Link to="/graph/onepager">
+                      <FileText className="mr-1 h-4 w-4" />
+                      {t('graph.action.onepager')}
+                    </Link>
+                  </Button>
+                  <Button variant="outline" asChild>
+                    <Link to="/graph/share">
+                      <Share2 className="mr-1 h-4 w-4" />
+                      {t('graph.action.share')}
+                    </Link>
+                  </Button>
+                  <Button variant="ghost" asChild>
+                    <Link to="/graph/assess">
+                      {t('graph.summary.full_cta')}
+                      <ArrowRight className="ml-1 h-4 w-4" />
+                    </Link>
+                  </Button>
+                </div>
+              </div>
+            </div>
+
+            {/* The canonical facets */}
             <GraphFacets graph={currentGraph} />
+
+            {/* Complete rule-based results */}
+            {interpretation && <InterpretationSections interpretation={interpretation} />}
 
             <p className="mx-auto max-w-2xl text-center text-xs leading-relaxed text-muted-foreground">
               {t('graph.footer.boundaries')}
@@ -123,7 +149,13 @@ function EmptyGraph() {
 function GraphSkeleton() {
   return (
     <div className="space-y-8">
-      <Skeleton className="h-24 w-full rounded-xl" />
+      <div className="grid gap-8 lg:grid-cols-[1fr_1.1fr]">
+        <Skeleton className="mx-auto aspect-square w-full max-w-sm rounded-2xl" />
+        <div className="space-y-4">
+          <Skeleton className="h-14 w-56" />
+          <Skeleton className="h-10 w-72" />
+        </div>
+      </div>
       <div className="grid gap-6 lg:grid-cols-2">
         {[0, 1, 2, 3].map((i) => (
           <Card key={i} className="border-hairline bg-card/60">

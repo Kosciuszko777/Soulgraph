@@ -51,6 +51,22 @@ export function parseAttribution(search: string, now: number): Attribution | nul
 }
 
 /**
+ * Build the referral link a user shares (carried on the share card and
+ * one-pager). Phase I has no commission ledger yet (Phase VII), but the link
+ * slot exists now so the share surfaces are built once.
+ *
+ * SLOT for Prompt 5: pass the owner's own referral code/npub as `ref`. Until an
+ * identity-bound code exists, callers may pass the owner npub. When `ref` is
+ * omitted the bare origin is returned (still shareable, just unattributed).
+ */
+export function referralLink(origin: string, ref?: string): string {
+  const base = origin.replace(/\/+$/, '');
+  if (!ref) return base + '/';
+  const params = new URLSearchParams({ ref });
+  return `${base}/?${params.toString()}`;
+}
+
+/**
  * Convert an attribution record into zap-request tags so that attribution is
  * recorded at payment time. Only non-empty fields are emitted.
  */

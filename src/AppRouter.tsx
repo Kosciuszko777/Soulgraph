@@ -4,7 +4,9 @@ import { ScrollToTop } from "./components/ScrollToTop";
 import Index from "./pages/Index";
 import Begin from "./pages/Begin";
 import Graph from "./pages/Graph";
+import Assess from "./pages/Assess";
 import GraphOnePager from "./pages/GraphOnePager";
+import GraphShare from "./pages/GraphShare";
 import Unlock from "./pages/Unlock";
 import PrivacyCenter from "./pages/PrivacyCenter";
 import Settings from "./pages/Settings";
@@ -23,7 +25,9 @@ export function AppRouter() {
         <Route path="/" element={<Index />} />
         <Route path="/begin" element={<Begin />} />
         <Route path="/graph" element={<Graph />} />
+        <Route path="/graph/assess" element={<Assess />} />
         <Route path="/graph/onepager" element={<GraphOnePager />} />
+        <Route path="/graph/share" element={<GraphShare />} />
         <Route path="/unlock" element={<Unlock />} />
         <Route path="/privacy-center" element={<PrivacyCenter />} />
         <Route path="/settings" element={<Settings />} />

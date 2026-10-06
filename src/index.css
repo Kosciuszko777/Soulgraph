@@ -273,6 +273,27 @@
       transparent
     );
   }
+
+  /* The constellation "lights up" on first view: a soft bloom + settle. */
+  .constellation-reveal {
+    animation: constellation-bloom 1.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  @keyframes constellation-bloom {
+    0% {
+      opacity: 0;
+      transform: scale(0.94);
+      filter: brightness(1.8) saturate(1.3);
+    }
+    60% {
+      filter: brightness(1.2);
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1);
+      filter: brightness(1);
+    }
+  }
 }
 
 @layer utilities {
@@ -317,5 +338,74 @@
     animation-iteration-count: 1 !important;
     transition-duration: 0.001ms !important;
     scroll-behavior: auto !important;
+  }
+}
+
+/* ────────────────────────────────────────────────────────────────
+   One-pager print layout. A single A4 portrait page, like a plate
+   from a scientific atlas. The on-screen preview mirrors the print
+   size; @page + exact colours make browser "Print → Save as PDF"
+   land on exactly one page in Chromium, Firefox and Safari.
+   ──────────────────────────────────────────────────────────────── */
+
+/* A4 portrait in CSS mm (210 × 297), with a comfortable engraved margin. */
+.onepager-page {
+  width: 210mm;
+  min-height: 297mm;
+  margin: 0 auto;
+  background: #0a1020;
+  color: #e6ecf6;
+  /* keep everything on one physical page */
+  overflow: hidden;
+}
+
+/* On screen, show it as a centred sheet with a subtle shadow. */
+@media screen {
+  .onepager-screen {
+    padding: 2rem 1rem;
+    background: color-mix(in oklab, var(--background) 92%, black);
+  }
+  .onepager-page {
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
+    transform-origin: top center;
+  }
+}
+
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 0;
+  }
+
+  html,
+  body {
+    background: #0a1020 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* Hide everything except the one-pager while printing. */
+  body.printing-onepager .app-chrome {
+    display: none !important;
+  }
+
+  .onepager-screen {
+    padding: 0 !important;
+    background: #0a1020 !important;
+  }
+
+  .onepager-page {
+    box-shadow: none !important;
+    width: 210mm !important;
+    height: 297mm !important;
+    page-break-after: avoid;
+    break-after: avoid;
+  }
+
+  /* Force dark plate colours to print (browsers strip backgrounds by default). */
+  .onepager-page,
+  .onepager-page * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
   }
 }
