@@ -9,7 +9,7 @@
  * never hard-coded — and calibrated so the 15-item demo lands near 18%.
  */
 
-import type { InstrumentDef } from '../types';
+import type { InstrumentDef, ItemDef } from '../types';
 import { jungInstrument } from './jung';
 import { enneagramInstrument } from './enneagram';
 import { lifePatternInstrument } from './lifePattern';
@@ -23,6 +23,29 @@ export const INSTRUMENTS: InstrumentDef[] = [
 
 export function getInstrument(id: string): InstrumentDef | undefined {
   return INSTRUMENTS.find((i) => i.id === id);
+}
+
+/** Find the instrument whose facet matches `facet`, if implemented. */
+export function getInstrumentByFacet(facet: string): InstrumentDef | undefined {
+  return INSTRUMENTS.find((i) => i.facet === facet);
+}
+
+/**
+ * Resolve the i18n label + description keys for a scale within a facet, so the
+ * UI can render stored scale values (which carry only scale ids) with human
+ * text. Returns undefined keys when the scale isn't found (e.g. Core composites
+ * which are labelled separately).
+ */
+export function scaleLabelKeys(
+  facet: string,
+  scaleId: string,
+): { label_key?: string; description_key?: string } {
+  const instrument = getInstrumentByFacet(facet);
+  const scale = instrument?.scales.find((s) => s.id === scaleId);
+  return {
+    label_key: scale?.label_key,
+    description_key: scale?.description_key,
+  };
 }
 
 /**
@@ -71,4 +94,27 @@ export function demoItemIds(): Set<string> {
     for (const item of inst.items) if (item.demo) ids.add(item.id);
   }
   return ids;
+}
+
+/** An item presented to the user, carrying the instrument it belongs to. */
+export interface PresentedItem {
+  item: ItemDef;
+  instrument: InstrumentDef;
+}
+
+/**
+ * Collect items for presentation, grouped by instrument in roadmap order. When
+ * `demoOnly` is true, only the 15-item demo subset is returned. Demo items are
+ * a strict subset of the full banks, so demo answers carry over and are never
+ * re-asked in the complete assessment.
+ */
+export function collectAssessmentItems(demoOnly: boolean): PresentedItem[] {
+  const presented: PresentedItem[] = [];
+  for (const instrument of INSTRUMENTS) {
+    for (const item of instrument.items) {
+      if (demoOnly && !item.demo) continue;
+      presented.push({ item, instrument });
+    }
+  }
+  return presented;
 }

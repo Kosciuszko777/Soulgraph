@@ -73,7 +73,10 @@ export function VaultProvider({ children }: { children: ReactNode }) {
 
       const graph: SoulGraph = {
         soulgraph_version: '1.0',
-        identity: { pubkey, display_name: identity?.display_name },
+        identity: {
+          pubkey,
+          display_name: current.display_name ?? identity?.display_name,
+        },
         jung: (facets.jung as SoulGraph['jung']) ?? null,
         ocean: (facets.ocean as SoulGraph['ocean']) ?? null,
         enneagram: (facets.enneagram as SoulGraph['enneagram']) ?? null,
@@ -81,8 +84,8 @@ export function VaultProvider({ children }: { children: ReactNode }) {
         life_pattern: (facets.life_pattern as SoulGraph['life_pattern']) ?? null,
         worldview: (facets.worldview as SoulGraph['worldview']) ?? null,
         soulgraph_core: (facets.soulgraph_core as SoulGraph['soulgraph_core']) ?? null,
-        confidence: { overall: 0, per_facet: {} },
-        provenance: {
+        confidence: current.confidence ?? { overall: 0, per_facet: {} },
+        provenance: current.provenance ?? {
           responses_hash: '0'.repeat(64),
           engine_version: '',
           instrument_versions: {},

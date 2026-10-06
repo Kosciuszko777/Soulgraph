@@ -1,18 +1,13 @@
-import { useNavigate } from 'react-router-dom';
 import { useSeoMeta } from '@unhead/react';
 import { AtlasLayout } from '@/components/shell/AtlasLayout';
-import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { Onboarding } from '@/components/identity/Onboarding';
+import { AssessmentRunner } from '@/components/assessment/AssessmentRunner';
 import { useCurrentUser } from '@/hooks/useCurrentUser';
-import { useVault } from '@/hooks/useVault';
 import { useI18n } from '@/hooks/useI18n';
 
 export default function Begin() {
   const { t } = useI18n();
   const { user } = useCurrentUser();
-  const { identity } = useVault();
-  const navigate = useNavigate();
 
   useSeoMeta({
     title: `${t('page.begin.title')} · ${t('app.name')}`,
@@ -33,21 +28,7 @@ export default function Begin() {
 
       <div className="container px-4 py-12 sm:px-6 sm:py-16">
         {user ? (
-          <Card className="mx-auto max-w-xl border-dashed bg-card/40">
-            <CardContent className="space-y-4 px-8 py-12 text-center">
-              <p className="text-muted-foreground">
-                {identity?.origin === 'anonymous' && !identity.backed_up
-                  ? 'Your identity is ready, but you have not backed up your key yet. Finish that in Settings before you pay or sync.'
-                  : 'Your identity is ready. The demo assessment arrives in the next phase.'}
-              </p>
-              <div className="flex justify-center gap-3">
-                <Button onClick={() => navigate('/graph')}>Go to my SoulGraph</Button>
-                <Button variant="outline" onClick={() => navigate('/settings')}>
-                  Settings
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
+          <AssessmentRunner mode="demo" />
         ) : (
           <Onboarding onDone={() => { /* stay; user now logged in */ }} />
         )}

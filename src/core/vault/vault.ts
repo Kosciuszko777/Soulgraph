@@ -14,6 +14,7 @@ import {
   type VaultIdentity,
   type VaultEnvelopeRecord,
   type VaultVersionRecord,
+  type VaultSessionRecord,
   type VaultAuditRecord,
   type VaultGrantRecord,
 } from './db';
@@ -25,7 +26,12 @@ import {
   type FacetEnvelope,
   type KeyWrapper,
 } from './envelope';
-import type { FacetKey } from '@/core/graph/schema';
+import {
+  FACET_KEYS,
+  type FacetKey,
+  type SoulGraph,
+  type SoulGraphVersion,
+} from '@/core/graph/schema';
 
 /** Generate an opaque random identifier (hex) for sync `d` tags and ids. */
 export function randomId(bytes = 16): string {
@@ -151,6 +157,117 @@ export async function listVersions(owner: string): Promise<VaultVersionRecord[]>
   const db = await getVaultDB();
   const all = await db.getAllFromIndex('versions', 'by_owner', owner);
   return all.sort((a, b) => a.sequence - b.sequence);
+}
+
+/**
+ * Point the owner's "current" SoulGraph at a version. The current graph is
+ * always a pointer, never a mutation (docs/ARCHITECTURE.md §3), so this only
+ * flips the `is_current` flag — no version is ever overwritten.
+ */
+export async function setCurrentVersion(owner: string, versionId: string): Promise<void> {
+  const db = await getVaultDB();
+  const all = await db.getAllFromIndex('versions', 'by_owner', owner);
+  const tx = db.transaction('versions', 'readwrite');
+  for (const record of all) {
+    const shouldBeCurrent = record.version_id === versionId;
+    if (record.is_current !== shouldBeCurrent) {
+      await tx.store.put({ ...record, is_current: shouldBeCurrent });
+    }
+  }
+  await tx.done;
+}
+
+/**
+ * Persist a complete, immutable SoulGraph version: seal every non-null facet
+ * into its own envelope, write the version record, and (by default) make it the
+ * current pointer. Sealing happens here so plaintext never reaches storage.
+ *
+ * Returns the number of facets sealed.
+ */
+export async function saveGraphVersion(
+  version: SoulGraphVersion,
+  wrapper: KeyWrapper,
+  options: { makeCurrent?: boolean } = {},
+): Promise<number> {
+  const makeCurrent = options.makeCurrent ?? true;
+  const owner = version.graph.identity.pubkey;
+  const versionId = version.version_id;
+
+  // Seal each non-null facet (identity is public-ish metadata — never an envelope).
+  let sealed = 0;
+  for (const facet of FACET_KEYS) {
+    if (facet === 'identity') continue;
+    const payload = version.graph[facet as keyof SoulGraph];
+    if (!payload) continue;
+    await saveFacet(owner, versionId, facet, payload, wrapper);
+    sealed += 1;
+  }
+
+  // Write the immutable version record.
+  const record: VaultVersionRecord = {
+    id: `${owner}:${versionId}`,
+    owner_pubkey: owner,
+    version_id: versionId,
+    sequence: version.sequence,
+    created_at: version.graph.created_at,
+    is_current: false, // set by setCurrentVersion below to keep one source of truth
+    confidence: version.graph.confidence,
+    provenance: version.graph.provenance,
+    display_name: version.graph.identity.display_name,
+  };
+  await putVersion(record);
+
+  if (makeCurrent) {
+    await setCurrentVersion(owner, versionId);
+  }
+
+  return sealed;
+}
+
+/* -------------------------------- sessions --------------------------------- */
+
+/**
+ * Persist a raw assessment session (the actual responses) encrypted to self.
+ * The responses themselves never leave the device unencrypted; only their hash
+ * is recorded in the graph's provenance.
+ */
+export async function saveSession(
+  owner: string,
+  payload: unknown,
+  wrapper: KeyWrapper,
+  options: { id?: string; completed?: boolean } = {},
+): Promise<VaultSessionRecord> {
+  const envelope = await sealFacet(payload, owner, wrapper);
+  const now = Math.floor(Date.now() / 1000);
+  const record: VaultSessionRecord = {
+    id: options.id ?? randomId(),
+    owner_pubkey: owner,
+    envelope,
+    created_at: now,
+    completed_at: options.completed ? now : undefined,
+  };
+  const db = await getVaultDB();
+  await db.put('sessions', record);
+  return record;
+}
+
+/** List all raw assessment sessions for an owner (newest first). */
+export async function listSessions(owner: string): Promise<VaultSessionRecord[]> {
+  const db = await getVaultDB();
+  const all = await db.getAllFromIndex('sessions', 'by_owner', owner);
+  return all.sort((a, b) => b.created_at - a.created_at);
+}
+
+/** Load and decrypt a single session's raw responses. */
+export async function loadSession<T = unknown>(
+  owner: string,
+  sessionId: string,
+  wrapper: KeyWrapper,
+): Promise<T | null> {
+  const db = await getVaultDB();
+  const record = await db.get('sessions', sessionId);
+  if (!record || record.owner_pubkey !== owner) return null;
+  return openFacet<T>(record.envelope, owner, wrapper);
 }
 
 /* --------------------------------- grants ---------------------------------- */

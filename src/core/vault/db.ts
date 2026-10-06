@@ -11,7 +11,7 @@
 
 import { openDB, type DBSchema, type IDBPDatabase } from 'idb';
 import type { FacetEnvelope } from './envelope';
-import type { FacetKey } from '@/core/graph/schema';
+import type { Confidence, FacetKey, Provenance } from '@/core/graph/schema';
 
 export const VAULT_DB_NAME = 'soulgraph-vault';
 export const VAULT_DB_VERSION = 1;
@@ -37,6 +37,15 @@ export interface VaultVersionRecord {
   created_at: number;
   /** Whether this version is the current pointer. */
   is_current: boolean;
+  /**
+   * Derived, non-psychological metadata kept alongside the version so the
+   * unlocked graph is faithful without decrypting every facet first. These are
+   * numbers and a response hash — never raw answers or facet content.
+   */
+  confidence?: Confidence;
+  provenance?: Provenance;
+  /** Optional display name snapshot at the time the version was created. */
+  display_name?: string;
 }
 
 /** A sealed facet envelope for one (version, facet). */

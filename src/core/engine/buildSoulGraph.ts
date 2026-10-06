@@ -144,7 +144,12 @@ function toScaleMap(result: InstrumentResult): ScaleMap {
 export function buildSoulGraph(
   set: ResponseSet,
   options: BuildOptions,
-  previousVersion?: SoulGraphVersion,
+  /**
+   * The previous version in the owner's history, used only to continue the
+   * monotonic sequence. A full {@link SoulGraphVersion} satisfies this, but any
+   * object carrying `sequence` (e.g. a stored version record) works too.
+   */
+  previousVersion?: Pick<SoulGraphVersion, 'sequence'>,
 ): SoulGraphVersion {
   const created_at = options.created_at ?? Math.floor(Date.now() / 1000);
 
