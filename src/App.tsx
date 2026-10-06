@@ -11,6 +11,8 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { NostrLoginProvider } from '@nostrify/react/login';
 import { AppProvider } from '@/components/AppProvider';
+import { VaultProvider } from '@/components/VaultProvider';
+import { SessionLockGate } from '@/components/identity/SessionLockGate';
 import { I18nProvider } from '@/i18n/I18nProvider';
 import { AppConfig } from '@/contexts/AppContext';
 import { APP_RELAYS } from '@/lib/appRelays';
@@ -55,12 +57,16 @@ export function App() {
             <NostrProvider>
               <NostrSync />
               <I18nProvider>
-                <TooltipProvider>
-                  <Toaster />
-                  <Suspense>
-                    <AppRouter />
-                  </Suspense>
-                </TooltipProvider>
+                <VaultProvider>
+                  <TooltipProvider>
+                    <Toaster />
+                    <SessionLockGate>
+                      <Suspense>
+                        <AppRouter />
+                      </Suspense>
+                    </SessionLockGate>
+                  </TooltipProvider>
+                </VaultProvider>
               </I18nProvider>
             </NostrProvider>
           </NostrLoginProvider>
